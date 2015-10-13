@@ -127,6 +127,30 @@ d-i partman-auto/disk string /dev/sda
 # for logical volumes.
 d-i partman-auto-lvm/guided_size string max
 
+#
+# The custom partitioning below will create the following
+# partitions, LVM Volume Group, and LVM Logical Volumes.
+#
+# root@ubuntu:~# parted /dev/sda print
+# Model: VMware, VMware Virtual S (scsi)
+# Disk /dev/sda: 21.5GB
+# Sector size (logical/physical): 512B/512B
+# Partition Table: msdos
+#
+# Number  Start   End     Size    Type     File system  Flags
+#  1      1049kB  512MB   511MB   primary  ext2         boot
+#  2      512MB   21.5GB  21.0GB  primary               lvm
+#
+# root@ubuntu:~# vgs
+#   VG   #PV #LV #SN Attr   VSize  VFree
+#   lxc    1   2   0 wz--n- 19.52g    0
+#
+# root@ubuntu:~# lvs
+#   LV     VG   Attr      LSize   Pool Origin Data%  Move Log Copy%  Convert
+#   root00 lxc  -wi-ao---  18.57g
+#   swap00 lxc  -wi-ao--- 976.00m
+#
+
 d-i partman-auto/choose_recipe select custompartitioning
 d-i partman-auto/expert_recipe string \
       custompartitioning :: \
