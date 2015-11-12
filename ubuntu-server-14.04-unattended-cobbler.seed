@@ -29,7 +29,7 @@ d-i debian-installer/add-kernel-opts string $kernel_options_post
 #############
 
 d-i netcfg/choose_interface select auto
-d-i netcfg/get_hostname string $myhostname
+d-i netcfg/get_hostname string $hostname
 
 #############
 #
@@ -38,10 +38,8 @@ d-i netcfg/get_hostname string $myhostname
 #############
 
 # Command Line 1: This is necessary otherwise you will be prompted to umount /dev/sda. See Ubuntu bug #1347726.
-# Command Line 2: Cobbler pre install command.
 d-i preseed/early_command string \
-      umount /media || true; \
-      wget -O- http://$http_server/cblr/svc/op/script/$what/$name/?script=preseed_early_default | /bin/sh -s
+      umount /media || true
 
 #############
 #
@@ -119,6 +117,7 @@ d-i partman-md/device_remove_md boolean true
 
 # And the same goes for the confirmation to write the lvm partitions.
 d-i partman-lvm/confirm boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
 
 d-i partman-auto/method string lvm
 d-i partman-auto/disk string /dev/sda
@@ -213,8 +212,6 @@ d-i pkgsel/update-policy select none
 # popular and include it on CDs.
 popularity-contest popularity-contest/participate boolean false
 
-$SNIPPET('preseed_apt_repo_config')
-
 #############
 #
 # Users and Password
@@ -255,11 +252,11 @@ d-i grub-installer/only_debian boolean true
 
 # Command Line 1: Allow root to SSH.
 # Command Line 2: Cobbler overwrites sources.list with its own repos. Put the default Ubuntu sources.list back.
-# Command Line 3: Cobbler command post install command.
+# Command Line 3: Cobbler API call to turn off netboot.
 d-i preseed/late_command string \
         sed -i '/PermitRootLogin / s/ .*/ yes/' /target/etc/ssh/sshd_config; \
         wget http://$http_server/trusty-sources.list -O /target/etc/apt/sources.list; \
-        wget -O- http://$http_server/cblr/svc/op/script/$what/$name/?script=preseed_late_default | chroot /target /bin/sh -s
+        wget http://$http_server/cblr/svc/op/nopxe/system/$system_name -O /dev/null
 
 #############
 #

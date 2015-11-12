@@ -95,6 +95,7 @@ d-i partman-md/device_remove_md boolean true
 
 # And the same goes for the confirmation to write the lvm partitions.
 d-i partman-lvm/confirm boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
 
 d-i partman-auto/method string lvm
 d-i partman-auto/disk string /dev/sda
