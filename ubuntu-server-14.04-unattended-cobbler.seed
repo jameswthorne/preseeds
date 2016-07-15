@@ -96,7 +96,7 @@ d-i clock-setup/ntp-server string ntp.ubuntu.com
 
 # You may set this to any valid setting for $TZ; see the contents of
 # /usr/share/zoneinfo/ for valid values.
-d-i time/zone string US/Central
+d-i time/zone string UTC
 
 # Controls whether or not the hardware clock is set to UTC.
 d-i clock-setup/utc boolean true
